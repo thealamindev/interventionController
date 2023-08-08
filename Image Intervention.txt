@@ -1,0 +1,50 @@
+For Install: composer require intervention/image
+===========================================
+
+After you have installed Intervention Image, open your Laravel config file config/app.php and add the following lines.
+
+In the $providers array add the service providers for this package.
+
+Intervention\Image\ImageServiceProvider::class
+
+Add the facade of this package to the $aliases array.
+
+'Image' => Intervention\Image\Facades\Image::class
+
+Use This Line In Home Controller: use Intervention\Image\ImageManagerStatic as Image;
+/// CMD ////
+$ php artisan vendor:publish --provider="Intervention\Image\ImageServiceProviderLaravelRecent"
+=========================================
+
+// open and resize an image file
+$img = Image::make('public/foo.jpg')->resize(300, 200);
+
+
+$img->save('public/foo', 80, 'jpg');
+
+
+
+
+=====================================================
+
+
+=================================================
+
+Home Conroller:
+use Intervention\Image\ImageManagerStatic as Image;
+
+ public function profile_photo_update(Request $request)
+    {
+        $request->validate([
+            'profile_photo' => 'required|image',
+        ]);
+        // return $request->file('profile_photo');
+        $new_name = Auth::user()->id . "." . $request->file('profile_photo')->getClientOriginalExtension();
+        $img =Image::make($request->file('profile_photo'))->resize(300, 200);
+        $img->save(base_path('public/uploads/profile_photos/' . $new_name), 80);
+        User::find(auth()->id())->update(
+            [
+                'profile_photo'=> $new_name,
+            ]);
+            return back();
+    }
